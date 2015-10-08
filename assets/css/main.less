@@ -53,7 +53,9 @@
 
 header {
 	color:@main;
-	
+	border-bottom: 1px solid lighten(@main, 40%);
+	padding-bottom: 20px;
+	background: lighten(@main, 50%);
 	svg {
 			display: inline-block;
 			width:78px;
@@ -82,7 +84,6 @@ header {
 		span {
 			color:@main;
 			font-weight: 200;
-			margin-left: 5px;
 		}
 		a.maker {
 			color:@dark;
@@ -211,6 +212,8 @@ article {
 		white-space: normal;
 		word-wrap:break-word;
 		width: 100%;
+		color:@main;
+		background: lighten(@main, 50%);
 	}
 
 	pre {

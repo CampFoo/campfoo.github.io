@@ -76,22 +76,21 @@ of content that needs to be mapped, for example content that comes from another
 framework or source on the server but needs to be reflected in your root sitemap.</p>
 
 <p>Fortunately there is a filter for this plugin that allows this, it's just a bit tricky to find. The filter
-is called "wpseo&#95;sitemap&#95;index". You may also need to prevent caching for a while
+is called <code>add&#95;filter('wpseo&#95;sitemap&#95;index', 'my&#95;wpseo&#95;sitemap&#95;index');</code>. You may also need to prevent caching for a while
 in order to make the change appear. For this you need to filter 
-"wpseo&#95;enable&#95;xml&#95;sitemap&#95;transient_caching" and return false.</p>
+<code>add&#95;filter('wpseo&#95;enable&#95;xml&#95;sitemap&#95;transient&#95;caching', '&#95;&#95;return&#95;false');</code> and return false.</p>
 
-<pre><code class="php">// ../theme/functions.php
-// Make sure we're using WPSEO
+<pre><code class="php">// ../mytheme/functions.php
 if( class_exists('WPSEO_Sitemaps') ) {
-    function filter_wpseo_sitemap_index(){
+    function my_wpseo_sitemap_index(){
         // Add custom item to sitemap index
-        $sitemap_custom_items = '
+        $extraSitemaps = '
             &lt;sitemap&gt;
                &lt;loc&gt;' . get_bloginfo('url').'/extra-sitemap.xml&lt;/loc&gt;
                &lt;lastmod&gt;' . $last_date . '&lt;/lastmod&gt;
             &lt;/sitemap&lt;
         ';
-        return $sitemap_custom_items;
+        return $extraSitemaps;
     }
     add_filter( 'wpseo_sitemap_index', 'filter_wpseo_sitemap_index' );
     add_filter( 'wpseo_enable_xml_sitemap_transient_caching', '__return_false' );
