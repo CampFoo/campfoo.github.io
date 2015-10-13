@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<title>Make your uploaded post images retina friendly</title>
+	<meta name="description" content="It's easy enough to make your assets retina/non-retina in a theme with a bit of css, but what about uploaded images?" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png" />
+
+			<link rel="stylesheet" href="/assets/css/compiled.css">
+	
+	<meta property="og:title" content="Make your uploaded Wordpress images friendly for retina and non-retina devices" />
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="http://wp.campfoo.com/create-retina-image-fallback-wordpress-uploaded-images/" />
+	<meta property="og:image" content="http://wp.campfoo.com/assets/img/favicon.png" />
+
+	<link rel="canonical" href="http://wp.campfoo.com/create-retina-image-fallback-wordpress-uploaded-images/">
+
+	<script> 
+		// if( location.host == 'wp.campfoo.com' ){
+		// 	location.href = location.href.replace("www", "");
+		// }
+	</script>
+
+	    <meta name="google-site-verification" content="Wai8kIyQN1X5BgA7gLRpS36QXInhC2KxbPjsPSxU3po" />
+</head>
+
+<body class="">
+
+	<header>
+
+		<div class="container">
+			<h1>
+				<a href="/" title="Quick Wordpress tips to save you time">
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+
+	 width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+
+<path id="danger-8-icon" d="M292.027,397.099c19.051-4.771,48.279-46.982,43.314-88.535c-5.594,15.223-31.389,29.766-38.227,27.434
+
+	c13.053-19.57,27.744-63.416,10.537-89.912c-5.668,19-19,33.666-30.664,33.646c14.277-24.018,16.881-95.121-58.145-109.102
+
+	c33.086,48.93-50.191,107.789,14.457,167.303c-17.648-0.182-35.316-14.848-44.316-31.514c-15.666,40.666,14.748,79.816,29.408,90.68
+
+	c-71.408-7.68-111.908-96.182-96.812-165.705c6.072,37.025,38.072,47.689,51.598,48.279
+
+	c-86.193-104.256,56.23-148.805,23.918-229.424c54.059,5.438,116.389,62.168,98.889,123.668c16.5-4.5,32-21,35.451-45.896
+
+	c34.795,48.463,31.863,106.254,15.553,143.535c15.496-0.139,38.996-21.139,43.996-42.471
+
+	C408.098,331.31,335.924,397.099,292.027,397.099z M341.984"/>
+
+</svg>
+
+					CampFoo <span>WP</span></a>
+			</h1>
+			<div class="info">A collection of Wordpress development tips and tricks to save you time on your project.</div>
+		</div>
+
+	</header>
+	<div class="container">
+
+		<a href="/" class="go-home">← Recent articles</a>
+		<div class="row single">
+			<div class="col-sm-8">
+				<article>
+					<h2>Make your uploaded Wordpress images friendly for retina and non-retina devices</h2>
+					<time><small>13th October 2015</small></time>
+					<div class="intro">
+    <p><strong>What are retina images?</strong>
+    <br /><a href="https://en.wikipedia.org/wiki/Retina_Display" target="_blank" title="What are retina images">Retina devices</a> are high resolution displays. Retina images are simply high resolution images. These suit modern devices from Apple and other manufacturers who have added this feature to their products to enhance visual performance. When
+    using ordinary (low-res) images, there'll be reduced visual experience like blurriness or pixelation. You need to be aware of using retina images in modern web development.</p>
+</div>
+
+<h3>Provide two different versions of the image uploaded to Wordpress</h3>
+
+<p>Wordpress is able to create multiple variations of each uploaded image. It does this automatically
+and this is built in, but it won't necessarily create the versions you need, for example, a version 
+of the image that is half the resolution of the original.</p>
+
+<p>That's where you come in. You can generate this image <em>on the fly</em> using the very handy vt_resize script: 
+<code><a href="https://gist.github.com/seedprod/1367237" target="_blank" title="Wordpress image resize script">https://gist.github.com/seedprod/1367237</a></code></p>
+
+<p>You need to indicate to your clients (for example if you're using ACF) that they should upload a retina-friendly version of the image (@2x). Then in your theme files, you simply need to generate a version that is half the size for ordinary devices, and the full original size for retina devices. There are a few ways to approach this, but first, the PHP required. The example assumes you're using the featured image, but you could easily be using an ACF field or other field.</p>
+
+<pre><code class="php">// ../mytheme/functions.php
+function get_retina_and_fallback_url( $post, $thumbType = 'full' ){
+    $thumbId = get_post_thumbnail_id($post->ID);
+    $retinaImage = wp_get_attachment_image_src( $thumbId, $thumbType );
+    $standardImage = vt_resize( 
+        $retinaImage[0], '', 
+        $retinaImage[1]/2, // Width
+        $retinaImage[2]/2, // Height
+        true 
+    );
+    return array(
+        "featured_image" => $standardImage,
+        "featured_image_retina" => $retinaImage
+    );
+}
+</code></pre>
+
+<p>This returns an array of the two images, then you can output it into your HTML like so:</p>
+
+<pre><code class="html">&lt;!-- ../mytheme/single.php --&gt;
+&lt;?php $images = get_retina_and_fallback( $post, 'full' ); ?&gt;
+&lt;img id="featured-img" src="&lt;?= $images['featured_image']['url'] ?>" 
+    data-retina="&lt;?= $images['featured_image_retina']['url'] ?&gt;" /&gt;
+&lt;script type="text/javascript"&gt;
+    setRetinaImage(document.getElementById("featured-img"));
+    function setRetinaImage( el ){
+        if( window.devicePixelRatio === 2 ){
+            el.src = el.getAttribute("data-retina");
+        }
+    }
+&lt;/script&gt;
+</code></pre>
+
+<p>This is a hacky example for quick reading, but you get the picture. You could also opt to
+replace the images only after window load, so the user gets a low res version first and can
+begin viewing the site immediately without waiting for heavy graphics, and after some time the high res images elegantly replace the low res versions for optimal viewing.</p>
+
+<p>Now go forth and refactor!</p>
+					
+				</article>
+			</div>
+			<div class="col-sm-4">
+				<!-- Adsense -->
+				<div class="ads">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<footer class="container">
+    <hr />
+    <div class="text-center text-muted">
+        <small>
+            &copy; 2015 
+            CampFoo. 
+            All rights reserved. Quick WP tips to save you time.        </small>
+    </div>
+    <br />
+</footer>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<script>
+
+    if( location.host == 'wp.campfoo.com' ){
+        var trackingCode = 'XX-xxxxxxx-x';
+        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='//www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        
+        var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+        var _gaq = _gaq || [];
+        _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+        ga('create', trackingCode);
+        ga('require', 'linkid', 'linkid.js');
+        ga('send','pageview');
+    }
+
+</script>
+
+</body>
+</html>
